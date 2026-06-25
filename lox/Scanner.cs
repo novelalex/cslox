@@ -77,6 +77,8 @@ namespace lox {
                 case '/':
                     if (Match('/')) {
                         while (Peek() != '\n' && !IsAtEnd()) Advance();
+                    } else if (Match('*')) {
+                        HandleBlockComment();
                     } else {
                         AddToken(TokenType.SLASH);
                     }
@@ -193,6 +195,36 @@ namespace lox {
 
         private bool IsAlphaNumeric(char c) {
             return IsAlpha(c) || IsDigit(c);
+        }
+
+        private void HandleBlockComment() {
+            int depth = 0;
+
+            while (!IsAtEnd()) {
+                if ((Peek() == '*') && (PeekNext() == '/')) {
+                    if (depth == 0) {
+                        break;
+                    }
+                    Advance();
+                    depth--;
+                } else if ((Peek() == '/') && (PeekNext() == '*')) {
+                    Advance();
+                    depth++;
+                } else if (Peek() == '\n') {
+                    line++;
+                }
+                Advance();
+            }
+
+            if (IsAtEnd()) {
+                Lox.Error(line, "Unterminated block comment.");
+                return;
+            }
+
+            // Consume closing '*/'
+            Advance();
+            Advance();
+
         }
     }
 }

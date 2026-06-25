@@ -8,7 +8,7 @@ namespace lox {
 
         public static void Main(String[] args){
             if (args.Length > 1) {
-                Console.Out.WriteLine("Usage: glox [script]");
+                Console.Out.WriteLine("Usage: cslox [script]");
                 Environment.Exit(64);
             } else if (args.Length == 1) {
                 RunFile(args[0]);
@@ -33,7 +33,7 @@ namespace lox {
         }
 
         private static void Run(string source) {
-            Scanner scanner = new Scanner(source);
+            Scanner scanner = new(source);
             List<Token> tokens = scanner.ScanTokens();
 
             foreach (Token token in tokens) {

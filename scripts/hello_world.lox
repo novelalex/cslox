@@ -1,0 +1,16 @@
+// single line comment
+
+/*  block
+    comment 
+    /*  nested 
+        block
+        comment
+    */
+
+    /* second one */
+
+*/
+
+while true {
+    print "hello world"
+}
