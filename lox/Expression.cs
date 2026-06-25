@@ -1,0 +1,19 @@
+﻿namespace cslox.lox {
+    abstract class Expression {
+        public class Binary(Expression left, Token op, Expression right) : Expression {
+            public readonly Expression left = left;
+            public readonly  Token op = op;
+            public readonly  Expression right = right;
+        }
+        public class Grouping(Expression expression) : Expression {
+            public readonly Expression expression = expression;
+        }
+        public class Literal(object value) : Expression {
+            public readonly object value = value;
+        }
+        public class Unary(Token op, Expression right) : Expression {
+            public readonly Token op = op;
+            public readonly  Expression right = right;
+        }
+    }
+}

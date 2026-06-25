@@ -1,0 +1,55 @@
+open System
+open System.IO
+open System.Text
+
+// Normally I'd reach for python for tasks like this,
+// but I didn't want to leave the dotnet "ecosystem".
+
+// That being said I'm very new to f# 
+// please forgive my procedural programming.
+
+let args = Environment.GetCommandLineArgs()
+
+if args.Length <> 1 then
+    printfn "usage: dotnet fsi GenerateAST.fsx <output directory>"
+
+let outputDirectory = args.[2]
+
+let baseName = "Expression"
+
+// TODO(novel): learn more f# and use records or something here
+let types = [
+    "Binary   : Expression left, Token op, Expression right";
+    "Grouping : Expression expression";
+    "Literal  : object value";
+    "Unary    : Token op, Expression right"
+]
+
+let defineType (writer: StreamWriter) baseName className (fieldList: string) =
+    writer.WriteLine $"        public class {className}({fieldList}) : {baseName} {{"
+    
+    let fields = fieldList.Split ','
+    for field in fields do
+        let name = field.Trim().Split(' ').[1]
+        writer.WriteLine $"            public readonly {field} = {name};"
+    
+    writer.WriteLine "        }"
+
+
+let defineAST outputDirectory baseName types =
+    let path = $"{outputDirectory}/{baseName}.cs"
+    use writer = new StreamWriter(path, false, Encoding.UTF8)
+    writer.WriteLine  "namespace cslox.lox {" 
+    writer.WriteLine $"    abstract class {baseName} {{"
+    
+    for t: string in types do
+        let parts = t.Split ':'
+        let className = parts.[0].Trim()
+        let fields = parts.[1].Trim()
+        defineType writer baseName className fields
+    
+    writer.WriteLine  "    }"
+    writer.WriteLine  "}"
+    
+
+defineAST outputDirectory baseName types
