@@ -1,16 +1,10 @@
-namespace lox {
-    class Token {
-        public readonly TokenType type;
-        public readonly string? lexeme;
-        public readonly Object? literal;
-        public readonly int line;
-
-        public Token(TokenType type, string? lexeme, Object? literal, int line) {
-            this.type = type;
-            this.lexeme = lexeme;
-            this.literal = literal;
-            this.line = line;
-        }
+namespace cslox.lox {
+    class Token(TokenType type, string? lexeme, object? literal, int line)
+    {
+        public readonly TokenType type = type;
+        public readonly string? lexeme = lexeme;
+        public readonly object? literal = literal;
+        public readonly int line = line;
 
         public override string? ToString() {
             return $"{type} {lexeme} {literal}";

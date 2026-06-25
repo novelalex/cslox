@@ -2,7 +2,7 @@ using System;
 using static System.Console;
 
 
-namespace lox {
+namespace cslox.lox {
     class Lox {
         static bool hadError = false;
 

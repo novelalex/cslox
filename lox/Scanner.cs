@@ -1,7 +1,8 @@
-namespace lox {
-    class Scanner {
-        private readonly string source;
-        private readonly List<Token> tokens = new List<Token>();
+namespace cslox.lox {
+    class Scanner(string source)
+    {
+        private readonly string source = source;
+        private readonly List<Token> tokens = [];
         private int start = 0;
         private int current = 0;
         private int line = 1;
@@ -9,27 +10,25 @@ namespace lox {
         private static readonly Dictionary<string, TokenType> keywords;
 
         static Scanner(){
-            keywords = new Dictionary<string, TokenType>();
-            keywords["and"]     = TokenType.AND;
-            keywords["class"]   = TokenType.CLASS;
-            keywords["else"]    = TokenType.ELSE;
-            keywords["false"]   = TokenType.FALSE;
-            keywords["for"]     = TokenType.FOR;
-            keywords["fun"]     = TokenType.FUN;
-            keywords["if"]      = TokenType.IF;
-            keywords["nil"]     = TokenType.NIL;
-            keywords["or"]      = TokenType.OR;
-            keywords["print"]   = TokenType.PRINT;
-            keywords["return"]  = TokenType.RETURN;
-            keywords["super"]   = TokenType.SUPER;
-            keywords["this"]    = TokenType.THIS;
-            keywords["true"]    = TokenType.TRUE;
-            keywords["var"]     = TokenType.VAR;
-            keywords["while"]   = TokenType.WHILE;
-        }
-
-        public Scanner(string source) {
-            this.source = source;
+            keywords = new Dictionary<string, TokenType>
+            {
+                ["and"] = TokenType.AND,
+                ["class"] = TokenType.CLASS,
+                ["else"] = TokenType.ELSE,
+                ["false"] = TokenType.FALSE,
+                ["for"] = TokenType.FOR,
+                ["fun"] = TokenType.FUN,
+                ["if"] = TokenType.IF,
+                ["nil"] = TokenType.NIL,
+                ["or"] = TokenType.OR,
+                ["print"] = TokenType.PRINT,
+                ["return"] = TokenType.RETURN,
+                ["super"] = TokenType.SUPER,
+                ["this"] = TokenType.THIS,
+                ["true"] = TokenType.TRUE,
+                ["var"] = TokenType.VAR,
+                ["while"] = TokenType.WHILE
+            };
         }
 
         public List<Token> ScanTokens() {
@@ -118,7 +117,7 @@ namespace lox {
         }
 
         private void AddToken(TokenType type, Object? literal) {
-            string text = source.Substring(start, current - start);
+            string text = source[start..current];
             tokens.Add(new Token(type, text, literal, line));
         }
 
@@ -150,14 +149,14 @@ namespace lox {
             Advance();
 
             // Trim surrounding quotes
-            string value = source.Substring(start+1, current - start - 2);
+            string value = source[(start+1)..(current-1)];
 
             // TODO(novel): Handle escape codes
 
             AddToken(TokenType.STRING, value);
         }
 
-        private bool IsDigit(char c) {
+        private static bool IsDigit(char c) {
             return c >= '0' && c <= '9';
         }
 
@@ -171,7 +170,7 @@ namespace lox {
                 while (IsDigit(Peek())) Advance();
             }
 
-            AddToken(TokenType.NUMBER, double.Parse(source.Substring(start, current - start)));
+            AddToken(TokenType.NUMBER, double.Parse(source[start..current]));
         }
 
         private char PeekNext() {
@@ -182,18 +181,18 @@ namespace lox {
         private void HandleIdentifier() {
             while (IsAlphaNumeric(Peek())) Advance();
             
-            string text = source.Substring(start, current - start);
+            string text = source[start..current];
             TokenType? type = keywords.TryGetValue(text, out var t) ? t : null; 
             AddToken(type.GetValueOrDefault(TokenType.IDENTIFIER));
         }
 
-        private bool IsAlpha(char c) {
+        private static bool IsAlpha(char c) {
             return (c >= 'a' && c <= 'z') ||
                    (c >= 'A' && c <= 'Z') ||
                    (c == '_'); 
         }
 
-        private bool IsAlphaNumeric(char c) {
+        private static bool IsAlphaNumeric(char c) {
             return IsAlpha(c) || IsDigit(c);
         }
 
